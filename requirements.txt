@@ -1,0 +1,9 @@
+pandas
+streamlit
+python-dotenv
+google-genai
+ddgs
+playwright
+beautifulsoup4
+lxml
+requests

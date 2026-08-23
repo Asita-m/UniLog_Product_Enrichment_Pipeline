@@ -1,0 +1,27 @@
+# Environment
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# OS files
+.DS_Store
+
+# Generated data
+Data/*.csv
+*.csv
+
+# Debug files
+check_models.py
+normal.py
+test_search_api.py
+
+# IDE
+.vscode/
+.idea/
