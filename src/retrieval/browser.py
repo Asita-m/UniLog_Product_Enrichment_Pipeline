@@ -11,12 +11,13 @@ def fetch_with_browser(source: Source) -> dict:
     with sync_playwright() as p:
 
         browser = p.chromium.launch(
-            headless=False,
+            headless=True,
             args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
                 "--disable-blink-features=AutomationControlled"
             ]
         )
-
 
         context = browser.new_context(
 
