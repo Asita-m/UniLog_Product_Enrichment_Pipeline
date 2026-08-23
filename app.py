@@ -1,14 +1,54 @@
 import streamlit as st
 import pandas as pd
-import tempfile
+import subprocess
 import os
 
-from main import load_products, build_product
-from main import is_valid_page
 
-from src.retrieval.search import search_web
-from src.retrieval.rankers.source_ranker import rank_sources
-from src.retrieval.browser import fetch_with_browser
+# -------------------------
+# Ensure Playwright browser
+# exists on Streamlit Cloud
+# -------------------------
+
+PLAYWRIGHT_PATH = "/home/appuser/.cache/ms-playwright"
+
+
+if not os.path.exists(PLAYWRIGHT_PATH):
+
+    st.info(
+        "Installing browser dependencies..."
+    )
+
+    subprocess.run(
+        [
+            "playwright",
+            "install",
+            "chromium"
+        ],
+        check=True
+    )
+
+
+# -------------------------
+# Pipeline imports
+# -------------------------
+
+from main import (
+    load_products,
+    build_product,
+    is_valid_page
+)
+
+from src.retrieval.search import (
+    search_web
+)
+
+from src.retrieval.rankers.source_ranker import (
+    rank_sources
+)
+
+from src.retrieval.browser import (
+    fetch_with_browser
+)
 
 from src.retrieval.extractors.browser_html import (
     extract_browser_html
@@ -18,6 +58,11 @@ from src.retrieval.extractors.llm_extractor import (
     extract_product_data
 )
 
+
+
+# -------------------------
+# Streamlit UI
+# -------------------------
 
 st.set_page_config(
     page_title="UniLog AI",
@@ -29,6 +74,7 @@ st.title(
     "UniLog AI"
 )
 
+
 st.subheader(
     "AI Powered Product Catalog Enrichment System"
 )
@@ -37,8 +83,12 @@ st.subheader(
 st.write(
     """
 Upload a product CSV containing minimal catalog information.
-UniLog AI will discover product sources, extract information,
-and generate enriched catalog data.
+
+UniLog AI will:
+- Discover product sources
+- Select relevant webpages
+- Extract product information
+- Generate enriched catalog data
 """
 )
 
@@ -74,7 +124,10 @@ def process_product(row):
 
 
     st.write(
-        "Selected source:",
+        "Selected source:"
+    )
+
+    st.write(
         source.url
     )
 
@@ -92,6 +145,7 @@ def process_product(row):
     if not is_valid_page(
         data["text"]
     ):
+
         raise Exception(
             "Invalid webpage content"
         )
@@ -109,7 +163,6 @@ def process_product(row):
 
 if uploaded_file:
 
-
     df = pd.read_csv(
         uploaded_file
     )
@@ -119,6 +172,7 @@ if uploaded_file:
         "Input Data"
     )
 
+
     st.dataframe(
         df
     )
@@ -127,7 +181,6 @@ if uploaded_file:
     if st.button(
         "Generate Catalog"
     ):
-
 
         results = []
 
@@ -168,7 +221,6 @@ if uploaded_file:
 
         if results:
 
-
             output_df = pd.DataFrame(
                 results
             )
@@ -200,6 +252,7 @@ if uploaded_file:
                 file_name="unilog_output.csv",
                 mime="text/csv"
             )
+
 
         else:
 
